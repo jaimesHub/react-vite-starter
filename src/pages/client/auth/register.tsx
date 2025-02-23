@@ -3,7 +3,7 @@ import type { FormProps } from 'antd';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './register.scss';
-import { loginAPI } from '@/services/api';
+// import { loginAPI } from '@/services/api';
 
 type FieldType = {
     fullName: string;
@@ -17,8 +17,8 @@ const RegisterPage = () => {
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
         console.log(values);
-        const res = await loginAPI("admin@gmail.com", "123456");
-        console.log(">>> check res: ", res);
+        // const res = await loginAPI("admin@gmail.com", "123456");
+        // console.log(">>> check res: ", res.data?.access_token);
         setIsSubmit(true);
     };
 
