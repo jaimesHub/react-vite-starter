@@ -1,9 +1,9 @@
-import { Button, Divider, Form, Input } from 'antd';
+import { Button, Divider, Form, Input, App } from 'antd';
 import type { FormProps } from 'antd';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './register.scss';
-// import { loginAPI } from '@/services/api';
+import { registerAPI } from '@/services/api';
 
 type FieldType = {
     fullName: string;
@@ -14,12 +14,24 @@ type FieldType = {
 
 const RegisterPage = () => {
     const [isSubmit, setIsSubmit] = useState(false);
+    const { message } = App.useApp();
+    const navigate = useNavigate();
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-        console.log(values);
-        // const res = await loginAPI("admin@gmail.com", "123456");
-        // console.log(">>> check res: ", res.data?.access_token);
         setIsSubmit(true);
+        const { email, fullName, password, phone } = values;
+
+        const res = await registerAPI(fullName, email, password, phone);
+        if (res.data) {
+            //success
+            message.success("User registration successful!");
+            navigate("/login");
+        } else {
+            //error
+            // message.error(res.message);
+            message.error("Error while register!");
+        }
+        setIsSubmit(false);
     };
 
     return (
@@ -28,7 +40,7 @@ const RegisterPage = () => {
                 <div className="container">
                     <section className="wrapper">
                         <div className="heading">
-                            <h2 className="text text-large">Register</h2>
+                            <h2 className="text text-large">Register Account</h2>
                             <Divider />
                         </div>
                         <Form
@@ -40,7 +52,7 @@ const RegisterPage = () => {
                                 labelCol={{ span: 24 }} //whole column
                                 label="Full name"
                                 name="fullName"
-                                rules={[{ required: true, message: 'Fullname is required!' }]}
+                                rules={[{ required: true, message: 'Name cannot be left blank!' }]}
                             >
                                 <Input />
                             </Form.Item>
@@ -51,8 +63,8 @@ const RegisterPage = () => {
                                 label="Email"
                                 name="email"
                                 rules={[
-                                    { required: true, message: 'Email is required!' },
-                                    { type: "email", message: "Format is invalid!" }
+                                    { required: true, message: 'Email cannot be empty!' },
+                                    { type: "email", message: "Email is not in correct format!" }
                                 ]}
                             >
                                 <Input />
@@ -62,7 +74,7 @@ const RegisterPage = () => {
                                 labelCol={{ span: 24 }} //whole column
                                 label="Password"
                                 name="password"
-                                rules={[{ required: true, message: 'Password is required!' }]}
+                                rules={[{ required: true, message: 'Password cannot be blank!' }]}
                             >
                                 <Input.Password />
                             </Form.Item>
@@ -70,7 +82,7 @@ const RegisterPage = () => {
                                 labelCol={{ span: 24 }} //whole column
                                 label="Phone number"
                                 name="phone"
-                                rules={[{ required: true, message: 'Phone number is required!' }]}
+                                rules={[{ required: true, message: 'Phone number cannot be blank!' }]}
                             >
                                 <Input />
                             </Form.Item>
@@ -92,7 +104,7 @@ const RegisterPage = () => {
                 </div>
             </main>
         </div>
-    );
-};
+    )
+}
 
 export default RegisterPage;
